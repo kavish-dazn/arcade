@@ -1,3 +1,5 @@
 .home {
-    padding: rescale(18px);
+    &-link {
+        font-size: rescale(48px);
+    }
 }

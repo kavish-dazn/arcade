@@ -1,8 +1,9 @@
 :root {
-    --scale: 1;
+  --scale: 1;
+}
 
-    @media (max-width: 1280px) {
+@media (max-height: 720px) {
+    :root {
         --scale: calc(720 / 1080);
     }
 }
-
