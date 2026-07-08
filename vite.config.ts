@@ -8,4 +8,27 @@ export default defineConfig({
     react(),
     babel({ presets: [reactCompilerPreset()] })
   ],
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: `@use "@styles/mixins" as *;`,
+      },
+    },
+  },
+  resolve: {
+    alias: [
+      {
+        find: '@pages',
+        replacement: '/src/pages',
+      },
+      {
+        find: '@router',
+        replacement: '/src/router',
+      },
+      {
+        find: '@styles',
+        replacement: '/src/styles',
+      }
+    ]
+  }
 })

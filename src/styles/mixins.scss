@@ -1,0 +1,3 @@
+@function rescale($value) {
+    @return calc(#{$value} * var(--scale));
+}

@@ -20,7 +20,12 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "@pages/*": ["./src/pages/*"],
+      "@router/*": ["./src/router/*"],
+      "@styles/*": ["./src/styles/*"]
+    }
   },
   "include": ["src"]
 }
