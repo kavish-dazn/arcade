@@ -1,4 +1,10 @@
-import type { CarTheme } from './CarRenderer';
+import type { CarTheme } from './game/car/CarRenderer';
+
+export enum GameState {
+    Start,
+    Playing,
+    GameOver,
+}
 
 export const PLAYER_CAR: CarTheme = {
     bodyColor: '#d92929',

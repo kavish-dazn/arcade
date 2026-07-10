@@ -1,25 +1,14 @@
-import type { Bounds } from '../collision/CollisionManager';
+import Enemy from './Enemy';
 import LaneManager from '../road/LaneManager';
 import Road from '../road/Road';
 import { CarDimensions } from './CarDimensions';
-import { CarRenderer, type CarTheme } from './CarRenderer';
-import { ENEMY_CAR_THEMES } from './constant';
-
-interface Enemy {
-    lane: number;
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    speed: number;
-    theme: CarTheme;
-    getBounds: () => Bounds;
-}
+import { CarRenderer } from './CarRenderer';
+import { ENEMY_CAR_THEMES } from '../../constant';
 
 class EnemyManager {
     private enemies: Enemy[] = [];
-
     private spawnTimer = 0;
+    private score = 0;
 
     constructor(
         private readonly lanes: LaneManager,
@@ -35,7 +24,13 @@ class EnemyManager {
         }
 
         for (const enemy of this.enemies) {
-            enemy.y += enemy.speed * delta;
+            enemy.update(delta);
+
+            // Enemy has successfully passed the player
+            if (!enemy.passed && enemy.y >= this.road.getHeight()) {
+                enemy.passed = true;
+                this.score += enemy.points;
+            }
         }
 
         this.enemies = this.enemies.filter(
@@ -53,29 +48,27 @@ class EnemyManager {
         return this.enemies;
     }
 
+    getScore() {
+        return this.score;
+    }
+
     private spawnEnemy() {
         const width = CarDimensions.getWidth(this.road.getRoadWidth());
         const height = CarDimensions.getHeight(width);
 
         const lane = Math.floor(Math.random() * 3);
 
-        this.enemies.push({
-            lane,
-            x: this.lanes.getCenter(lane) - width / 2,
-            y: -height,
-            width,
-            height,
-            speed: 500,
-            theme: ENEMY_CAR_THEMES[Math.floor(Math.random() * ENEMY_CAR_THEMES.length)],
-            getBounds: function (): Bounds {
-                return {
-                    left: this.x + this.width * 0.15,
-                    right: this.x + this.width * 0.85,
-                    top: this.y + this.height * 0.1,
-                    bottom: this.y + this.height * 0.9,
-                };
-            },
-        });
+        this.enemies.push(
+            new Enemy(
+                lane,
+                this.lanes.getCenter(lane) - width / 2,
+                -height,
+                width,
+                height,
+                500,
+                ENEMY_CAR_THEMES[Math.floor(Math.random() * ENEMY_CAR_THEMES.length)],
+            ),
+        );
     }
 
     private drawEnemy(context: CanvasRenderingContext2D, enemy: Enemy) {
@@ -86,6 +79,12 @@ class EnemyManager {
             height: enemy.height,
             theme: enemy.theme,
         });
+    }
+
+    reset() {
+        this.enemies = [];
+        this.spawnTimer = 0;
+        this.score = 0;
     }
 }
 

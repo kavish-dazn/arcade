@@ -3,7 +3,7 @@ import type Road from '../road/Road';
 import type { Bounds } from '../collision/CollisionManager';
 import { CarDimensions } from './CarDimensions';
 import { CarRenderer } from './CarRenderer';
-import { PLAYER_CAR } from './constant';
+import { PLAYER_CAR } from '../../constant';
 
 class Player {
     private width = 0;

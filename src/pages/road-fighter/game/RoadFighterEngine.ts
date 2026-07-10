@@ -3,6 +3,7 @@ import Road from './road/Road';
 import Player from './car/Player';
 import EnemyManager from './car/EnemyManager';
 import { CollisionManager } from './collision/CollisionManager';
+import { GameState } from '../constant';
 
 export class RoadFighterEngine {
     private readonly canvas: HTMLCanvasElement;
@@ -16,6 +17,10 @@ export class RoadFighterEngine {
 
     private readonly player = new Player(this.lanes, this.road);
     private readonly enemyManager = new EnemyManager(this.lanes, this.road);
+
+    private state = GameState.Playing;
+    private startTime = performance.now();
+    private endTime = 0;
 
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
@@ -42,6 +47,9 @@ export class RoadFighterEngine {
     }
 
     update(deltaSeconds: number) {
+        if (this.state !== GameState.Playing) {
+            return;
+        }
         // const roadSpeed = this.height * 0.72;
         this.road.update(deltaSeconds);
         this.player.update(deltaSeconds);
@@ -71,6 +79,10 @@ export class RoadFighterEngine {
         this.drawLaneMarkers();
         this.enemyManager.render(context);
         this.drawPlayerCar();
+
+        if (this.state === GameState.GameOver) {
+            this.drawGameOver();
+        }
     }
 
     private drawBackground() {
@@ -124,8 +136,50 @@ export class RoadFighterEngine {
 
         for (const enemy of this.enemyManager.getEnemies()) {
             if (CollisionManager.isColliding(playerBounds, enemy.getBounds())) {
-                console.log('GAME OVER');
+                this.gameOver();
             }
         }
+    }
+
+    private gameOver() {
+        if (this.state === GameState.GameOver) {
+            return;
+        }
+
+        this.state = GameState.GameOver;
+        this.endTime = performance.now();
+    }
+
+    private drawGameOver() {
+        const ctx = this.context;
+
+        ctx.save();
+
+        ctx.fillStyle = 'rgba(0,0,0,0.75)';
+        ctx.fillRect(0, 0, this.width, this.height);
+
+        ctx.fillStyle = '#fff';
+
+        ctx.textAlign = 'center';
+
+        ctx.font = 'bold 64px Arial';
+
+        ctx.fillText('GAME OVER', this.width / 2, this.height / 2 - 120);
+
+        ctx.font = '36px Arial';
+
+        ctx.fillText(
+            `Score: ${this.enemyManager.getScore()}`,
+            this.width / 2,
+            this.height / 2 - 30,
+        );
+
+        const seconds = Math.floor((this.endTime - this.startTime) / 1000);
+
+        ctx.fillText(`Time: ${seconds}s`, this.width / 2, this.height / 2 + 30);
+
+        ctx.fillText('Press ENTER to Restart', this.width / 2, this.height / 2 + 120);
+
+        ctx.restore();
     }
 }
