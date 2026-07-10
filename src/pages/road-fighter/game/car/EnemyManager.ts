@@ -1,10 +1,11 @@
+import type { Bounds } from '../collision/CollisionManager';
 import LaneManager from '../road/LaneManager';
 import Road from '../road/Road';
 import { CarDimensions } from './CarDimensions';
 import { CarRenderer, type CarTheme } from './CarRenderer';
 import { ENEMY_CAR_THEMES } from './constant';
 
-interface IEnemy {
+interface Enemy {
     lane: number;
     x: number;
     y: number;
@@ -12,10 +13,11 @@ interface IEnemy {
     height: number;
     speed: number;
     theme: CarTheme;
+    getBounds: () => Bounds;
 }
 
-class Enemy {
-    private enemies: IEnemy[] = [];
+class EnemyManager {
+    private enemies: Enemy[] = [];
 
     private spawnTimer = 0;
 
@@ -65,10 +67,18 @@ class Enemy {
             height,
             speed: 500,
             theme: ENEMY_CAR_THEMES[Math.floor(Math.random() * ENEMY_CAR_THEMES.length)],
+            getBounds: function (): Bounds {
+                return {
+                    left: this.x + this.width * 0.15,
+                    right: this.x + this.width * 0.85,
+                    top: this.y + this.height * 0.1,
+                    bottom: this.y + this.height * 0.9,
+                };
+            },
         });
     }
 
-    private drawEnemy(context: CanvasRenderingContext2D, enemy: IEnemy) {
+    private drawEnemy(context: CanvasRenderingContext2D, enemy: Enemy) {
         CarRenderer.render(context, {
             x: enemy.x,
             y: enemy.y,
@@ -79,4 +89,4 @@ class Enemy {
     }
 }
 
-export default Enemy;
+export default EnemyManager;

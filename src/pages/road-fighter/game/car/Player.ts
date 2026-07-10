@@ -1,5 +1,6 @@
 import LaneManager from '../road/LaneManager';
 import type Road from '../road/Road';
+import type { Bounds } from '../collision/CollisionManager';
 import { CarDimensions } from './CarDimensions';
 import { CarRenderer } from './CarRenderer';
 import { PLAYER_CAR } from './constant';
@@ -63,12 +64,12 @@ class Player {
         });
     }
 
-    getBounds() {
+    getBounds(): Bounds {
         return {
-            left: this.x,
-            top: this.y,
-            right: this.x + this.width,
-            bottom: this.y + this.height,
+            left: this.x + this.width * 0.15,
+            right: this.x + this.width * 0.85,
+            top: this.y + this.height * 0.1,
+            bottom: this.y + this.height * 0.9,
         };
     }
 

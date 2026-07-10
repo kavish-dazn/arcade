@@ -1,7 +1,8 @@
 import LaneManager from './road/LaneManager';
 import Road from './road/Road';
 import Player from './car/Player';
-import EnemyManager from './car/Enemy';
+import EnemyManager from './car/EnemyManager';
+import { CollisionManager } from './collision/CollisionManager';
 
 export class RoadFighterEngine {
     private readonly canvas: HTMLCanvasElement;
@@ -45,6 +46,7 @@ export class RoadFighterEngine {
         this.road.update(deltaSeconds);
         this.player.update(deltaSeconds);
         this.enemyManager.update(deltaSeconds);
+        this.checkCollision();
     }
 
     moveLeft() {
@@ -117,15 +119,13 @@ export class RoadFighterEngine {
         ctx.fillRect(this.road.getRoadLeft(), 0, this.road.getRoadWidth(), this.height);
     }
 
-    private getRoadWidth() {
-        return Math.min(this.width * 0.68, this.height * 1.1);
-    }
+    private checkCollision() {
+        const playerBounds = this.player.getBounds();
 
-    private getLaneCenters() {
-        const roadWidth = this.getRoadWidth();
-        const roadLeft = (this.width - roadWidth) / 2;
-        const laneWidth = roadWidth / 3;
-
-        return [roadLeft + laneWidth * 0.5, roadLeft + laneWidth * 1.5, roadLeft + laneWidth * 2.5];
+        for (const enemy of this.enemyManager.getEnemies()) {
+            if (CollisionManager.isColliding(playerBounds, enemy.getBounds())) {
+                console.log('GAME OVER');
+            }
+        }
     }
 }
