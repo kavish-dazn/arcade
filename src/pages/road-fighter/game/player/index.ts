@@ -47,7 +47,11 @@ export default class Player {
 
         context.save();
 
-        context.translate(this.x, this.y);
+        context.translate(this.x + this.width / 2, this.y + this.height / 2);
+
+        context.rotate(Math.PI);
+
+        context.translate(-this.width / 2, -this.height / 2);
 
         context.fillStyle = '#d92929';
 
