@@ -2,14 +2,11 @@
     text-decoration: none;
     color: $color-font;
     display: block;
-    font-size: rescale(36px);
+    font-size: rescale(42px);
     margin-bottom: rescale(18px);
-    transition:
-        transform 150ms ease,
-        color 150ms ease;
+    transition: color 150ms ease;
 
     &.focused {
-        transform: scale(1.05);
         color: $color-link;
     }
 }

@@ -6,6 +6,10 @@ body {
     font-family: 'Black Ops One', system-ui;
 }
 
+* {
+    box-sizing: border-box;
+}
+
 h1 {
     font-size: rescale(60px);
     font-weight: 800;
