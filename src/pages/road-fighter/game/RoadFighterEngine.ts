@@ -13,12 +13,8 @@ export class RoadFighterEngine {
     private readonly road = new Road();
     private readonly lanes = new LaneManager();
 
-    private readonly player = new Player(() => this.getLaneCenters());
-    private readonly enemyManager = new EnemyManager(
-        (lane) => this.lanes.getCenter(lane),
-        () => this.road.getRoadWidth(),
-        () => this.height,
-    );
+    private readonly player = new Player(this.lanes);
+    private readonly enemyManager = new EnemyManager(this.lanes, this.road);
 
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
@@ -119,14 +115,6 @@ export class RoadFighterEngine {
         ctx.fillStyle = '#32343b';
 
         ctx.fillRect(this.road.getRoadLeft(), 0, this.road.getRoadWidth(), this.height);
-    }
-
-    private getLaneDashHeight() {
-        return Math.max(24, this.height * 0.07);
-    }
-
-    private getLaneDashPeriod() {
-        return this.getLaneDashHeight() * 1.8;
     }
 
     private getRoadWidth() {

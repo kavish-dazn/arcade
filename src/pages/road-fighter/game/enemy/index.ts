@@ -1,14 +1,23 @@
-import type { Enemy } from './type';
+import type { LaneManager } from '../road/LaneManager';
+import type { Road } from '../road/Road';
+
+interface IEnemy {
+    lane: number;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    speed: number;
+}
 
 export class EnemyManager {
-    private enemies: Enemy[] = [];
+    private enemies: IEnemy[] = [];
 
     private spawnTimer = 0;
 
     constructor(
-        private readonly getLaneCenter: (lane: number) => number,
-        private readonly getRoadWidth: () => number,
-        private readonly getCanvasHeight: () => number,
+        private readonly lanes: LaneManager,
+        private readonly road: Road,
     ) {}
 
     update(delta: number) {
@@ -24,7 +33,7 @@ export class EnemyManager {
         }
 
         this.enemies = this.enemies.filter(
-            (enemy) => enemy.y < this.getCanvasHeight() + enemy.height,
+            (enemy) => enemy.y < this.road.getHeight() + enemy.height,
         );
     }
 
@@ -39,7 +48,7 @@ export class EnemyManager {
     }
 
     private spawnEnemy() {
-        const roadWidth = this.getRoadWidth();
+        const roadWidth = this.road.getRoadWidth();
 
         const width = roadWidth * 0.16;
         const height = width * 1.55;
@@ -48,17 +57,15 @@ export class EnemyManager {
 
         this.enemies.push({
             lane,
-            x: this.getLaneCenter(lane) - width / 2,
+            x: this.lanes.getCenter(lane) - width / 2,
             y: -height,
-
             width,
             height,
-
             speed: 500,
         });
     }
 
-    private drawEnemy(ctx: CanvasRenderingContext2D, enemy: Enemy) {
+    private drawEnemy(ctx: CanvasRenderingContext2D, enemy: IEnemy) {
         ctx.save();
 
         ctx.translate(enemy.x, enemy.y);

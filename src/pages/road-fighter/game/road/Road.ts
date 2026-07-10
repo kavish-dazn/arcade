@@ -25,6 +25,10 @@ export class Road {
         return this.roadWidth;
     }
 
+    getHeight() {
+        return this.height;
+    }
+
     getRoadLeft() {
         return this.roadLeft;
     }

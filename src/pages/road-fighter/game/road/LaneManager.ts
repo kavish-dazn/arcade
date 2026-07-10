@@ -1,4 +1,6 @@
 export class LaneManager {
+    static readonly LANE_COUNT = 3;
+
     private roadLeft = 0;
 
     private roadWidth = 0;
@@ -11,7 +13,7 @@ export class LaneManager {
         this.roadLeft = roadLeft;
         this.roadWidth = roadWidth;
 
-        this.laneWidth = roadWidth / 3;
+        this.laneWidth = roadWidth / LaneManager.LANE_COUNT;
 
         this.centers = [
             roadLeft + this.laneWidth * 0.5,

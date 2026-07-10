@@ -1,3 +1,5 @@
+import { LaneManager } from '../road/LaneManager';
+
 export default class Player {
     private width = 0;
     private height = 0;
@@ -8,7 +10,7 @@ export default class Player {
     private currentLane = 1;
     private targetLane = 1;
 
-    constructor(private readonly getLaneCenters: () => number[]) {}
+    constructor(private readonly lanes: LaneManager) {}
 
     resize(roadWidth: number, canvasHeight: number) {
         this.width = Math.min(roadWidth * 0.16, 110);
@@ -28,9 +30,7 @@ export default class Player {
     }
 
     update(deltaSeconds: number) {
-        const lanes = this.getLaneCenters();
-
-        const targetX = lanes[this.targetLane] - this.width / 2;
+        const targetX = this.lanes.getCenter(this.targetLane) - this.width / 2;
 
         const speed = 12;
 
@@ -121,9 +121,7 @@ export default class Player {
     }
 
     private snapToLane() {
-        const lanes = this.getLaneCenters();
-
-        this.x = lanes[this.targetLane] - this.width / 2;
+        this.x = this.lanes.getCenter(this.targetLane) - this.width / 2;
 
         this.currentLane = this.targetLane;
     }
