@@ -19,13 +19,14 @@
         /* Linting */
         "noUnusedLocals": true,
         "noUnusedParameters": true,
-        "erasableSyntaxOnly": true,
+        "erasableSyntaxOnly": false,
         "noFallthroughCasesInSwitch": true,
         "paths": {
             "@focus": ["./src/focus"],
             "@pages/*": ["./src/pages/*"],
             "@router/*": ["./src/router/*"],
-            "@styles/*": ["./src/styles/*"]
+            "@styles/*": ["./src/styles/*"],
+            "@assets/*": ["./src/assets/*"]
         }
     },
     "include": ["src"]

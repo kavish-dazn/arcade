@@ -1,3 +1,5 @@
+import { EnemyManager } from './enemy/EnemyManager';
+
 type Direction = 'left' | 'right';
 
 interface Player {
@@ -15,6 +17,7 @@ export class RoadFighterEngine {
     private player: Player = { height: 0, width: 0, x: 0, y: 0 };
     private roadOffset = 0;
     private width = 0;
+    private enemyManager!: EnemyManager;
 
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
@@ -25,6 +28,19 @@ export class RoadFighterEngine {
         }
 
         this.context = context;
+    }
+
+    private getLaneCenter(lane: number) {
+        const roadWidth = this.getRoadWidth();
+        const roadLeft = (this.width - roadWidth) / 2;
+
+        const laneWidth = roadWidth / 3;
+
+        return (
+            roadLeft +
+            laneWidth * lane +
+            laneWidth / 2
+        );
     }
 
     resize(width: number, height: number, pixelRatio: number) {
@@ -39,6 +55,12 @@ export class RoadFighterEngine {
         this.player.height = this.player.width * 1.55;
         this.player.y = height - this.player.height - Math.max(28, height * 0.06);
         this.player.x = this.clampPlayerX(this.player.x || width / 2 - this.player.width / 2);
+
+        this.enemyManager = new EnemyManager(
+            lane => this.getLaneCenter(lane),
+            () => this.getRoadWidth(),
+            () => this.height,
+        );
     }
 
     setDirection(direction: Direction, isMoving: boolean) {
@@ -74,6 +96,7 @@ export class RoadFighterEngine {
 
         this.drawRoad(roadLeft, roadWidth);
         this.drawLaneMarkers(roadLeft, roadWidth);
+        this.enemyManager.render(context);
         this.drawPlayerCar();
     }
 

@@ -30,6 +30,10 @@ export default defineConfig({
                 find: '@styles',
                 replacement: '/src/styles',
             },
+            {
+                find: '@assets',
+                replacement: '/src/assets',
+            },
         ],
     },
 });
