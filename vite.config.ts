@@ -22,6 +22,10 @@ export default defineConfig({
         replacement: '/src/pages',
       },
       {
+        find: '@focus',
+        replacement: '/src/focus',
+      },
+      {
         find: '@router',
         replacement: '/src/router',
       },

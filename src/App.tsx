@@ -1,5 +1,5 @@
 import AppRouter from '@router/AppRouter';
-import { FocusProvider } from './focus';
+import { FocusProvider } from '@focus';
 
 import './App.scss';
 

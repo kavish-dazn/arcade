@@ -1,0 +1,26 @@
+.focus-button {
+    text-decoration: none;
+    color: $color-font;
+    display: block;
+    font-size: rescale(36px);
+    margin-bottom: rescale(18px);
+    transition: transform 150ms ease, color 150ms ease;
+
+    &.focused {
+        transform: scale(1.05);
+        color: $color-link;
+    }
+}
+
+.focus-container {
+    &--horizontal {
+        display: flex;
+        gap: rescale(18px);
+    }
+
+    &--grid {
+        display: grid;
+        grid-template-columns: repeat(var(--focus-grid-columns), minmax(0, 1fr));
+        gap: rescale(18px);
+    }
+}

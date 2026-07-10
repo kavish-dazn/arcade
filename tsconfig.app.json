@@ -22,6 +22,7 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
+      "@focus": ["./src/focus"],
       "@pages/*": ["./src/pages/*"],
       "@router/*": ["./src/router/*"],
       "@styles/*": ["./src/styles/*"]

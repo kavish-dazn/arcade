@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-import { Focusable, FocusScope } from '../../focus';
+import { Focusable, FocusScope, VerticalList } from '@focus';
 import { HOME_LINKS } from './constants';
 import './styles.scss';
 
@@ -11,7 +11,7 @@ export default function Home() {
     <FocusScope id="home">
       <div className="home">
         <h1>Welcome to Arcade</h1>
-        <div>
+        <VerticalList>
           {HOME_LINKS.map((link, index) => (
             <Focusable
               className="home-link"
@@ -23,7 +23,7 @@ export default function Home() {
               {link.label}
             </Focusable>
           ))}
-        </div>
+        </VerticalList>
       </div>
     </FocusScope>
   );

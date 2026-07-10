@@ -17,18 +17,3 @@ h1 {
 .center {
     text-align: center;
 }
-
-.link {
-    text-decoration: none;
-    color: $color-font;
-    display: block;
-    font-size: rescale(36px);
-    margin-bottom: rescale(18px);
-    &:hover {
-        color: $color-link;
-    }
-}
-
-a {
-    @extend .link;
-}

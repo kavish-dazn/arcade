@@ -14,6 +14,7 @@ import type { FocusDirection, FocusableOptions } from './types';
 interface RegisteredFocusable {
     scopeId: string;
     optionsRef: MutableRefObject<FocusableOptions>;
+    getNextId?: (id: string, direction: FocusDirection) => string | undefined;
 }
 
 interface FocusContextValue {
@@ -21,7 +22,11 @@ interface FocusContextValue {
     focusedId: string | null;
     activateScope: (scopeId: string) => void;
     deactivateScope: (scopeId: string) => void;
-    registerFocusable: (scopeId: string, optionsRef: MutableRefObject<FocusableOptions>) => () => void;
+    registerFocusable: (
+        scopeId: string,
+        optionsRef: MutableRefObject<FocusableOptions>,
+        getNextId?: (id: string, direction: FocusDirection) => string | undefined,
+    ) => () => void;
     registerBackHandler: (handler: () => void) => () => void;
 }
 
@@ -63,9 +68,13 @@ export function FocusProvider({ children }: { children: ReactNode }) {
         setFocusedId(null);
     }, []);
 
-    const registerFocusable = useCallback((scopeId: string, optionsRef: MutableRefObject<FocusableOptions>) => {
+    const registerFocusable = useCallback((
+        scopeId: string,
+        optionsRef: MutableRefObject<FocusableOptions>,
+        getNextId?: (id: string, direction: FocusDirection) => string | undefined,
+    ) => {
         const key = getFocusableKey(scopeId, optionsRef.current.id);
-        focusablesRef.current.set(key, { scopeId, optionsRef });
+        focusablesRef.current.set(key, { scopeId, optionsRef, getNextId });
 
         return () => {
             focusablesRef.current.delete(key);
@@ -92,7 +101,8 @@ export function FocusProvider({ children }: { children: ReactNode }) {
         }
 
         const currentItem = focusablesRef.current.get(getFocusableKey(activeScopeId, focusedId));
-        const nextId = currentItem?.optionsRef.current[direction];
+        const nextId = currentItem?.optionsRef.current[direction]
+            ?? currentItem?.getNextId?.(focusedId, direction);
 
         if (!nextId) {
             return;
