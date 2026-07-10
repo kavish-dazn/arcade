@@ -1,4 +1,4 @@
-export class Road {
+class Road {
     private width = 0;
     private height = 0;
 
@@ -53,3 +53,5 @@ export class Road {
         return this.getLaneDashHeight() * 1.8;
     }
 }
+
+export default Road;

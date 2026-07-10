@@ -1,6 +1,6 @@
-import { LaneManager } from '../road/LaneManager';
+import LaneManager from '../road/LaneManager';
 
-export default class Player {
+class Player {
     private width = 0;
     private height = 0;
 
@@ -130,3 +130,5 @@ export default class Player {
         this.currentLane = this.targetLane;
     }
 }
+
+export default Player;

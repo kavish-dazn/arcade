@@ -1,4 +1,4 @@
-export class LaneManager {
+class LaneManager {
     static readonly LANE_COUNT = 3;
 
     private roadLeft = 0;
@@ -46,3 +46,5 @@ export class LaneManager {
         return this.centers.length;
     }
 }
+
+export default LaneManager;

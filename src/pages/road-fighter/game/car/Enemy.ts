@@ -1,5 +1,5 @@
-import type { LaneManager } from '../road/LaneManager';
-import type { Road } from '../road/Road';
+import LaneManager from '../road/LaneManager';
+import Road from '../road/Road';
 
 interface IEnemy {
     lane: number;
@@ -10,7 +10,7 @@ interface IEnemy {
     speed: number;
 }
 
-export class EnemyManager {
+class Enemy {
     private enemies: IEnemy[] = [];
 
     private spawnTimer = 0;
@@ -117,3 +117,5 @@ export class EnemyManager {
         context.restore();
     }
 }
+
+export default Enemy;

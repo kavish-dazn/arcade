@@ -1,7 +1,7 @@
-import { EnemyManager } from './enemy';
-import Player from './player';
-import { LaneManager } from './road/LaneManager';
-import { Road } from './road/Road';
+import LaneManager from './road/LaneManager';
+import  Road from './road/Road';
+import Player from './car/Player';
+import EnemyManager from './car/Enemy';
 
 export class RoadFighterEngine {
     private readonly canvas: HTMLCanvasElement;
