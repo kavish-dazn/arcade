@@ -8,7 +8,12 @@ export function Focusable({ children, className, ...options }: FocusableProps) {
     const { isFocused } = useFocusable(options);
 
     return (
-        <div className={classNames('focus-button', className, { focused: isFocused, disabled: options.disabled })}>
+        <div
+            className={classNames('focus-button', className, {
+                focused: isFocused,
+                disabled: options.disabled,
+            })}
+        >
             {children}
         </div>
     );

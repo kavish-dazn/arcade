@@ -45,18 +45,22 @@ export function FocusProvider({ children }: { children: ReactNode }) {
     const [focusedId, setFocusedId] = useState<string | null>(null);
 
     const focusInitialItem = useCallback((scopeId: string) => {
-        const items = [...focusablesRef.current.values()]
-            .filter((item) => item.scopeId === scopeId && !item.optionsRef.current.disabled);
+        const items = [...focusablesRef.current.values()].filter(
+            (item) => item.scopeId === scopeId && !item.optionsRef.current.disabled,
+        );
         const initialItem = items.find((item) => item.optionsRef.current.initialFocus) ?? items[0];
 
         setFocusedId(initialItem?.optionsRef.current.id ?? null);
     }, []);
 
-    const activateScope = useCallback((scopeId: string) => {
-        activeScopeIdRef.current = scopeId;
-        setActiveScopeId(scopeId);
-        focusInitialItem(scopeId);
-    }, [focusInitialItem]);
+    const activateScope = useCallback(
+        (scopeId: string) => {
+            activeScopeIdRef.current = scopeId;
+            setActiveScopeId(scopeId);
+            focusInitialItem(scopeId);
+        },
+        [focusInitialItem],
+    );
 
     const deactivateScope = useCallback((scopeId: string) => {
         if (activeScopeIdRef.current !== scopeId) {
@@ -68,18 +72,21 @@ export function FocusProvider({ children }: { children: ReactNode }) {
         setFocusedId(null);
     }, []);
 
-    const registerFocusable = useCallback((
-        scopeId: string,
-        optionsRef: MutableRefObject<FocusableOptions>,
-        getNextId?: (id: string, direction: FocusDirection) => string | undefined,
-    ) => {
-        const key = getFocusableKey(scopeId, optionsRef.current.id);
-        focusablesRef.current.set(key, { scopeId, optionsRef, getNextId });
+    const registerFocusable = useCallback(
+        (
+            scopeId: string,
+            optionsRef: MutableRefObject<FocusableOptions>,
+            getNextId?: (id: string, direction: FocusDirection) => string | undefined,
+        ) => {
+            const key = getFocusableKey(scopeId, optionsRef.current.id);
+            focusablesRef.current.set(key, { scopeId, optionsRef, getNextId });
 
-        return () => {
-            focusablesRef.current.delete(key);
-        };
-    }, []);
+            return () => {
+                focusablesRef.current.delete(key);
+            };
+        },
+        [],
+    );
 
     const registerBackHandler = useCallback((handler: () => void) => {
         const id = Symbol('back-handler');
@@ -95,25 +102,31 @@ export function FocusProvider({ children }: { children: ReactNode }) {
         handlers.at(-1)?.();
     }, []);
 
-    const moveFocus = useCallback((direction: FocusDirection) => {
-        if (!activeScopeId || !focusedId) {
-            return;
-        }
+    const moveFocus = useCallback(
+        (direction: FocusDirection) => {
+            if (!activeScopeId || !focusedId) {
+                return;
+            }
 
-        const currentItem = focusablesRef.current.get(getFocusableKey(activeScopeId, focusedId));
-        const nextId = currentItem?.optionsRef.current[direction]
-            ?? currentItem?.getNextId?.(focusedId, direction);
+            const currentItem = focusablesRef.current.get(
+                getFocusableKey(activeScopeId, focusedId),
+            );
+            const nextId =
+                currentItem?.optionsRef.current[direction] ??
+                currentItem?.getNextId?.(focusedId, direction);
 
-        if (!nextId) {
-            return;
-        }
+            if (!nextId) {
+                return;
+            }
 
-        const nextItem = focusablesRef.current.get(getFocusableKey(activeScopeId, nextId));
+            const nextItem = focusablesRef.current.get(getFocusableKey(activeScopeId, nextId));
 
-        if (nextItem && !nextItem.optionsRef.current.disabled) {
-            setFocusedId(nextItem.optionsRef.current.id);
-        }
-    }, [activeScopeId, focusedId]);
+            if (nextItem && !nextItem.optionsRef.current.disabled) {
+                setFocusedId(nextItem.optionsRef.current.id);
+            }
+        },
+        [activeScopeId, focusedId],
+    );
 
     const selectFocusedItem = useCallback(() => {
         if (!activeScopeId || !focusedId) {
@@ -132,9 +145,8 @@ export function FocusProvider({ children }: { children: ReactNode }) {
     }, [activeScopeId, focusInitialItem, focusedId]);
 
     useEffect(() => {
-        const focusedKey = activeScopeId && focusedId
-            ? getFocusableKey(activeScopeId, focusedId)
-            : null;
+        const focusedKey =
+            activeScopeId && focusedId ? getFocusableKey(activeScopeId, focusedId) : null;
 
         if (previousFocusedKeyRef.current === focusedKey) {
             return;
@@ -183,14 +195,24 @@ export function FocusProvider({ children }: { children: ReactNode }) {
         return () => window.removeEventListener('keydown', onKeyDown);
     }, [handleBack, moveFocus, selectFocusedItem]);
 
-    const value = useMemo(() => ({
-        activeScopeId,
-        focusedId,
-        activateScope,
-        deactivateScope,
-        registerFocusable,
-        registerBackHandler,
-    }), [activeScopeId, activateScope, deactivateScope, focusedId, registerBackHandler, registerFocusable]);
+    const value = useMemo(
+        () => ({
+            activeScopeId,
+            focusedId,
+            activateScope,
+            deactivateScope,
+            registerFocusable,
+            registerBackHandler,
+        }),
+        [
+            activeScopeId,
+            activateScope,
+            deactivateScope,
+            focusedId,
+            registerBackHandler,
+            registerFocusable,
+        ],
+    );
 
     return <FocusContext.Provider value={value}>{children}</FocusContext.Provider>;
 }

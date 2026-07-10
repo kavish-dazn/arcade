@@ -1,4 +1,11 @@
-import { createContext, useCallback, useContext, useEffect, useLayoutEffect, type ReactNode } from 'react';
+import {
+    createContext,
+    useCallback,
+    useContext,
+    useEffect,
+    useLayoutEffect,
+    type ReactNode,
+} from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { FocusContext } from './FocusProvider';
@@ -34,7 +41,10 @@ export function FocusScope({ id, children, onBack }: FocusScopeProps) {
         return () => deactivateScope(id);
     }, [activateScope, deactivateScope, id]);
 
-    useLayoutEffect(() => registerBackHandler(defaultBackHandler), [defaultBackHandler, registerBackHandler]);
+    useLayoutEffect(
+        () => registerBackHandler(defaultBackHandler),
+        [defaultBackHandler, registerBackHandler],
+    );
 
     return <FocusScopeContext.Provider value={id}>{children}</FocusScopeContext.Provider>;
 }

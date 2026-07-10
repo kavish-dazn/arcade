@@ -41,7 +41,13 @@ function getNextIndex(index: number, length: number, step: number, loop: boolean
     return loop ? (nextIndex + length) % length : undefined;
 }
 
-function FocusContainer({ children, className, loop = false, type, columns = 1 }: FocusContainerProps & {
+function FocusContainer({
+    children,
+    className,
+    loop = false,
+    type,
+    columns = 1,
+}: FocusContainerProps & {
     type: ContainerType;
     columns?: number;
 }) {
@@ -56,61 +62,75 @@ function FocusContainer({ children, className, loop = false, type, columns = 1 }
         };
     }, []);
 
-    const getNextId = useCallback((id: string, direction: FocusDirection) => {
-        const items = [...itemsRef.current.values()];
-        const index = items.findIndex((item) => item.current.id === id);
+    const getNextId = useCallback(
+        (id: string, direction: FocusDirection) => {
+            const items = [...itemsRef.current.values()];
+            const index = items.findIndex((item) => item.current.id === id);
 
-        if (index === -1) {
-            return undefined;
-        }
-
-        let nextIndex: number | undefined;
-
-        if (type === 'vertical' && (direction === 'up' || direction === 'down')) {
-            nextIndex = getNextIndex(index, items.length, direction === 'up' ? -1 : 1, loop);
-        }
-
-        if (type === 'horizontal' && (direction === 'left' || direction === 'right')) {
-            nextIndex = getNextIndex(index, items.length, direction === 'left' ? -1 : 1, loop);
-        }
-
-        if (type === 'grid') {
-            const row = Math.floor(index / columns);
-            const column = index % columns;
-
-            if (direction === 'left' || direction === 'right') {
-                const rowStart = row * columns;
-                const rowEnd = Math.min(rowStart + columns, items.length) - 1;
-                nextIndex = direction === 'left'
-                    ? (index > rowStart ? index - 1 : loop ? rowEnd : undefined)
-                    : (index < rowEnd ? index + 1 : loop ? rowStart : undefined);
+            if (index === -1) {
+                return undefined;
             }
 
-            if (direction === 'up' || direction === 'down') {
-                const candidate = direction === 'up' ? index - columns : index + columns;
+            let nextIndex: number | undefined;
 
-                if (candidate >= 0 && candidate < items.length) {
-                    nextIndex = candidate;
-                } else if (loop) {
-                    const rows = Math.ceil(items.length / columns);
-                    const loopedRow = direction === 'up' ? rows - 1 : 0;
-                    const loopedIndex = loopedRow * columns + column;
-                    nextIndex = loopedIndex < items.length ? loopedIndex : undefined;
+            if (type === 'vertical' && (direction === 'up' || direction === 'down')) {
+                nextIndex = getNextIndex(index, items.length, direction === 'up' ? -1 : 1, loop);
+            }
+
+            if (type === 'horizontal' && (direction === 'left' || direction === 'right')) {
+                nextIndex = getNextIndex(index, items.length, direction === 'left' ? -1 : 1, loop);
+            }
+
+            if (type === 'grid') {
+                const row = Math.floor(index / columns);
+                const column = index % columns;
+
+                if (direction === 'left' || direction === 'right') {
+                    const rowStart = row * columns;
+                    const rowEnd = Math.min(rowStart + columns, items.length) - 1;
+                    nextIndex =
+                        direction === 'left'
+                            ? index > rowStart
+                                ? index - 1
+                                : loop
+                                  ? rowEnd
+                                  : undefined
+                            : index < rowEnd
+                              ? index + 1
+                              : loop
+                                ? rowStart
+                                : undefined;
+                }
+
+                if (direction === 'up' || direction === 'down') {
+                    const candidate = direction === 'up' ? index - columns : index + columns;
+
+                    if (candidate >= 0 && candidate < items.length) {
+                        nextIndex = candidate;
+                    } else if (loop) {
+                        const rows = Math.ceil(items.length / columns);
+                        const loopedRow = direction === 'up' ? rows - 1 : 0;
+                        const loopedIndex = loopedRow * columns + column;
+                        nextIndex = loopedIndex < items.length ? loopedIndex : undefined;
+                    }
                 }
             }
-        }
 
-        return nextIndex === undefined ? undefined : items[nextIndex]?.current.id;
-    }, [columns, loop, type]);
+            return nextIndex === undefined ? undefined : items[nextIndex]?.current.id;
+        },
+        [columns, loop, type],
+    );
 
     const value = useMemo(() => ({ getNextId, registerFocusable }), [getNextId, registerFocusable]);
-    const style = type === 'grid'
-        ? { '--focus-grid-columns': columns } as CSSProperties
-        : undefined;
+    const style =
+        type === 'grid' ? ({ '--focus-grid-columns': columns } as CSSProperties) : undefined;
 
     return (
         <FocusContainerContext.Provider value={value}>
-            <div className={classNames('focus-container', `focus-container--${type}`, className)} style={style}>
+            <div
+                className={classNames('focus-container', `focus-container--${type}`, className)}
+                style={style}
+            >
                 {children}
             </div>
         </FocusContainerContext.Provider>

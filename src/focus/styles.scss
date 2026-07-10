@@ -4,7 +4,9 @@
     display: block;
     font-size: rescale(36px);
     margin-bottom: rescale(18px);
-    transition: transform 150ms ease, color 150ms ease;
+    transition:
+        transform 150ms ease,
+        color 150ms ease;
 
     &.focused {
         transform: scale(1.05);

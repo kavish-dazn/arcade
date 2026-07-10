@@ -1,0 +1,6 @@
+dist
+node_modules
+*.tsbuildinfo
+*.md
+pnpm-lock.yaml
+pnpm-workspace.yaml
