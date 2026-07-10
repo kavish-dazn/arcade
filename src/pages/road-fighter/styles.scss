@@ -3,11 +3,17 @@
         color: $color-error;
     }
 
-    &--link {
+    &__canvas {
+        display: block;
+        height: calc(100vh - rescale(128px));
+        margin: 0 auto;
+        max-width: 100%;
+        width: min(100%, calc((100vh - rescale(128px)) * 1.78));
     }
 
-    &__button {
-        &.focused {
-        }
+    &__instructions {
+        color: $color-font;
+        font-size: rescale(24px);
+        margin: rescale(12px) 0 0;
     }
 }
