@@ -1,19 +1,11 @@
-import { EnemyManager } from './enemy/EnemyManager';
-
-interface Player {
-    height: number;
-    width: number;
-    x: number;
-    y: number;
-    currentLane: number;
-    targetLane: number;
-}
+import { EnemyManager } from './enemy';
+import Player from './player';
 
 export class RoadFighterEngine {
     private readonly canvas: HTMLCanvasElement;
     private readonly context: CanvasRenderingContext2D;
     private height = 0;
-    private player: Player = { height: 0, width: 0, x: 0, y: 0, currentLane: 1, targetLane: 1 };
+    private player = new Player(() => this.getLaneCenters());
     private roadOffset = 0;
     private width = 0;
     private enemyManager!: EnemyManager;
@@ -42,30 +34,23 @@ export class RoadFighterEngine {
         this.canvas.height = Math.round(height * pixelRatio);
         this.context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
 
-        const lanes = this.getLaneCenters();
         const roadWidth = this.getRoadWidth();
-        this.player.width = Math.min(roadWidth * 0.16, 110);
-        this.player.height = this.player.width * 1.55;
-
-        this.player.y = height - this.player.height - Math.max(28, height * 0.06);
-
-        this.player.x = lanes[this.player.targetLane] - this.player.width / 2;
+        this.player.resize(roadWidth, height);
     }
 
     update(deltaSeconds: number) {
         const roadSpeed = this.height * 0.72;
         this.roadOffset = (this.roadOffset + roadSpeed * deltaSeconds) % this.getLaneDashPeriod();
-        this.updatePlayer(deltaSeconds);
-
+        this.player.update(deltaSeconds);
         this.enemyManager.update(deltaSeconds);
     }
 
     moveLeft() {
-        this.player.targetLane = Math.max(0, this.player.targetLane - 1);
+        this.player.moveLeft();
     }
 
     moveRight() {
-        this.player.targetLane = Math.min(2, this.player.targetLane + 1);
+        this.player.moveRight();
     }
 
     render() {
@@ -106,34 +91,7 @@ export class RoadFighterEngine {
 
     private drawPlayerCar() {
         const context = this.context;
-        const { height, width, x, y } = this.player;
-        const radius = width * 0.16;
-
-        context.save();
-        context.translate(x, y);
-
-        context.fillStyle = '#d92929';
-        context.beginPath();
-        context.moveTo(radius, 0);
-        context.lineTo(width - radius, 0);
-        context.quadraticCurveTo(width, 0, width, radius);
-        context.lineTo(width, height - radius);
-        context.quadraticCurveTo(width, height, width - radius, height);
-        context.lineTo(radius, height);
-        context.quadraticCurveTo(0, height, 0, height - radius);
-        context.lineTo(0, radius);
-        context.quadraticCurveTo(0, 0, radius, 0);
-        context.fill();
-
-        context.fillStyle = '#7ed4ed';
-        context.fillRect(width * 0.18, height * 0.18, width * 0.64, height * 0.25);
-        context.fillStyle = '#9a1515';
-        context.fillRect(width * 0.1, height * 0.53, width * 0.8, height * 0.16);
-        context.fillStyle = '#fff8b3';
-        context.fillRect(width * 0.14, height * 0.84, width * 0.2, height * 0.07);
-        context.fillRect(width * 0.66, height * 0.84, width * 0.2, height * 0.07);
-
-        context.restore();
+        this.player.render(context);
     }
 
     private drawRoad(roadLeft: number, roadWidth: number) {
@@ -173,20 +131,5 @@ export class RoadFighterEngine {
         const laneWidth = roadWidth / 3;
 
         return [roadLeft + laneWidth * 0.5, roadLeft + laneWidth * 1.5, roadLeft + laneWidth * 2.5];
-    }
-
-    private updatePlayer(deltaSeconds: number) {
-        const lanes = this.getLaneCenters();
-
-        const targetX = lanes[this.player.targetLane] - this.player.width / 2;
-
-        const speed = 12;
-
-        this.player.x += (targetX - this.player.x) * speed * deltaSeconds;
-
-        if (Math.abs(targetX - this.player.x) < 1) {
-            this.player.x = targetX;
-            this.player.currentLane = this.player.targetLane;
-        }
     }
 }
