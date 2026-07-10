@@ -30,19 +30,20 @@ export function RoadFighterGame({ onExitToStart }: RoadFighterGameProps) {
         };
 
         const onKeyDown = (event: KeyboardEvent) => {
-            if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-                event.preventDefault();
-                engine.setDirection(event.key === 'ArrowLeft' ? 'left' : 'right', true);
+            switch (event.key) {
+                case 'ArrowLeft':
+                    event.preventDefault();
+                    engine.moveLeft();
+                    break;
+
+                case 'ArrowRight':
+                    event.preventDefault();
+                    engine.moveRight();
+                    break;
             }
         };
 
-        const onKeyUp = (event: KeyboardEvent) => {
-            if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-                engine.setDirection(event.key === 'ArrowLeft' ? 'left' : 'right', false);
-            }
-        };
-
-        const onWindowBlur = () => engine.stopMoving();
+        // const onWindowBlur = () => engine.stopMoving();
 
         const renderFrame = (timestamp: number) => {
             const deltaSeconds = Math.min((timestamp - previousTimestamp) / 1000, 0.05);
@@ -56,16 +57,14 @@ export function RoadFighterGame({ onExitToStart }: RoadFighterGameProps) {
         resizeObserver.observe(canvas);
         resize();
         window.addEventListener('keydown', onKeyDown);
-        window.addEventListener('keyup', onKeyUp);
-        window.addEventListener('blur', onWindowBlur);
+        // window.addEventListener('blur', onWindowBlur);
         animationFrameId = requestAnimationFrame(renderFrame);
 
         return () => {
             cancelAnimationFrame(animationFrameId);
             resizeObserver.disconnect();
             window.removeEventListener('keydown', onKeyDown);
-            window.removeEventListener('keyup', onKeyUp);
-            window.removeEventListener('blur', onWindowBlur);
+            // window.removeEventListener('blur', onWindowBlur);
         };
     }, []);
 
@@ -76,7 +75,9 @@ export function RoadFighterGame({ onExitToStart }: RoadFighterGameProps) {
                 className="road-fighter__canvas"
                 ref={canvasRef}
             />
-            <p className="road-fighter__instructions">Use Left and Right to steer · Back for menu</p>
+            <p className="road-fighter__instructions">
+                Use Left and Right to steer · Back for menu
+            </p>
         </div>
     );
 }

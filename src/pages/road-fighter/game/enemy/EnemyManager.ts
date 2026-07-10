@@ -24,7 +24,7 @@ export class EnemyManager {
         }
 
         this.enemies = this.enemies.filter(
-            enemy => enemy.y < this.getCanvasHeight() + enemy.height,
+            (enemy) => enemy.y < this.getCanvasHeight() + enemy.height,
         );
     }
 
@@ -58,22 +58,14 @@ export class EnemyManager {
         });
     }
 
-    private drawEnemy(
-        ctx: CanvasRenderingContext2D,
-        enemy: Enemy,
-    ) {
+    private drawEnemy(ctx: CanvasRenderingContext2D, enemy: Enemy) {
         ctx.save();
 
         ctx.translate(enemy.x, enemy.y);
 
-        ctx.fillStyle = "#2b7fff";
+        ctx.fillStyle = '#2b7fff';
 
-        ctx.fillRect(
-            0,
-            0,
-            enemy.width,
-            enemy.height,
-        );
+        ctx.fillRect(0, 0, enemy.width, enemy.height);
 
         ctx.restore();
     }

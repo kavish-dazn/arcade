@@ -1,20 +1,19 @@
 import { EnemyManager } from './enemy/EnemyManager';
 
-type Direction = 'left' | 'right';
-
 interface Player {
     height: number;
     width: number;
     x: number;
     y: number;
+    currentLane: number;
+    targetLane: number;
 }
 
 export class RoadFighterEngine {
     private readonly canvas: HTMLCanvasElement;
     private readonly context: CanvasRenderingContext2D;
     private height = 0;
-    private moving = { left: false, right: false };
-    private player: Player = { height: 0, width: 0, x: 0, y: 0 };
+    private player: Player = { height: 0, width: 0, x: 0, y: 0, currentLane: 1, targetLane: 1 };
     private roadOffset = 0;
     private width = 0;
     private enemyManager!: EnemyManager;
@@ -28,18 +27,11 @@ export class RoadFighterEngine {
         }
 
         this.context = context;
-    }
 
-    private getLaneCenter(lane: number) {
-        const roadWidth = this.getRoadWidth();
-        const roadLeft = (this.width - roadWidth) / 2;
-
-        const laneWidth = roadWidth / 3;
-
-        return (
-            roadLeft +
-            laneWidth * lane +
-            laneWidth / 2
+        this.enemyManager = new EnemyManager(
+            (lane) => this.getLaneCenter(lane),
+            () => this.getRoadWidth(),
+            () => this.height,
         );
     }
 
@@ -50,35 +42,30 @@ export class RoadFighterEngine {
         this.canvas.height = Math.round(height * pixelRatio);
         this.context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
 
+        const lanes = this.getLaneCenters();
         const roadWidth = this.getRoadWidth();
         this.player.width = Math.min(roadWidth * 0.16, 110);
         this.player.height = this.player.width * 1.55;
+
         this.player.y = height - this.player.height - Math.max(28, height * 0.06);
-        this.player.x = this.clampPlayerX(this.player.x || width / 2 - this.player.width / 2);
 
-        this.enemyManager = new EnemyManager(
-            lane => this.getLaneCenter(lane),
-            () => this.getRoadWidth(),
-            () => this.height,
-        );
-    }
-
-    setDirection(direction: Direction, isMoving: boolean) {
-        this.moving[direction] = isMoving;
-    }
-
-    stopMoving() {
-        this.moving.left = false;
-        this.moving.right = false;
+        this.player.x = lanes[this.player.targetLane] - this.player.width / 2;
     }
 
     update(deltaSeconds: number) {
         const roadSpeed = this.height * 0.72;
-        const playerSpeed = this.width * 0.5;
-        const direction = Number(this.moving.right) - Number(this.moving.left);
-
         this.roadOffset = (this.roadOffset + roadSpeed * deltaSeconds) % this.getLaneDashPeriod();
-        this.player.x = this.clampPlayerX(this.player.x + direction * playerSpeed * deltaSeconds);
+        this.updatePlayer(deltaSeconds);
+
+        this.enemyManager.update(deltaSeconds);
+    }
+
+    moveLeft() {
+        this.player.targetLane = Math.max(0, this.player.targetLane - 1);
+    }
+
+    moveRight() {
+        this.player.targetLane = Math.min(2, this.player.targetLane + 1);
     }
 
     render() {
@@ -98,17 +85,6 @@ export class RoadFighterEngine {
         this.drawLaneMarkers(roadLeft, roadWidth);
         this.enemyManager.render(context);
         this.drawPlayerCar();
-    }
-
-    private clampPlayerX(x: number) {
-        const roadWidth = this.getRoadWidth();
-        const roadLeft = (this.width - roadWidth) / 2;
-        const shoulder = Math.max(12, roadWidth * 0.05);
-
-        return Math.min(
-            roadLeft + roadWidth - shoulder - this.player.width,
-            Math.max(roadLeft + shoulder, x),
-        );
     }
 
     private drawLaneMarkers(roadLeft: number, roadWidth: number) {
@@ -180,5 +156,37 @@ export class RoadFighterEngine {
 
     private getRoadWidth() {
         return Math.min(this.width * 0.68, this.height * 1.1);
+    }
+
+    private getLaneCenter(lane: number) {
+        const roadWidth = this.getRoadWidth();
+        const roadLeft = (this.width - roadWidth) / 2;
+
+        const laneWidth = roadWidth / 3;
+
+        return roadLeft + laneWidth * lane + laneWidth / 2;
+    }
+
+    private getLaneCenters() {
+        const roadWidth = this.getRoadWidth();
+        const roadLeft = (this.width - roadWidth) / 2;
+        const laneWidth = roadWidth / 3;
+
+        return [roadLeft + laneWidth * 0.5, roadLeft + laneWidth * 1.5, roadLeft + laneWidth * 2.5];
+    }
+
+    private updatePlayer(deltaSeconds: number) {
+        const lanes = this.getLaneCenters();
+
+        const targetX = lanes[this.player.targetLane] - this.player.width / 2;
+
+        const speed = 12;
+
+        this.player.x += (targetX - this.player.x) * speed * deltaSeconds;
+
+        if (Math.abs(targetX - this.player.x) < 1) {
+            this.player.x = targetX;
+            this.player.currentLane = this.player.targetLane;
+        }
     }
 }
