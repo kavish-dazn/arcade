@@ -1,8 +1,8 @@
 import LaneManager from '../road/LaneManager';
 import Road from '../road/Road';
 import { CarDimensions } from './CarDimensions';
-import { CarRenderer } from './CarRenderer';
-import { BLUE_CAR } from './constant';
+import { CarRenderer, type CarTheme } from './CarRenderer';
+import { ENEMY_CAR_THEMES } from './constant';
 
 interface IEnemy {
     lane: number;
@@ -11,6 +11,7 @@ interface IEnemy {
     width: number;
     height: number;
     speed: number;
+    theme: CarTheme;
 }
 
 class Enemy {
@@ -63,6 +64,7 @@ class Enemy {
             width,
             height,
             speed: 500,
+            theme: ENEMY_CAR_THEMES[Math.floor(Math.random() * ENEMY_CAR_THEMES.length)],
         });
     }
 
@@ -72,7 +74,7 @@ class Enemy {
             y: enemy.y,
             width: enemy.width,
             height: enemy.height,
-            theme: BLUE_CAR,
+            theme: enemy.theme,
         });
     }
 }
