@@ -1,12 +1,15 @@
 import AppRouter from '@router/AppRouter';
+import { FocusProvider } from './focus';
 
 import './App.scss';
 
 function App() {
     return (
-        <div className="root-container">
-            <AppRouter />
-        </div>
+        <FocusProvider>
+            <div className="root-container">
+                <AppRouter />
+            </div>
+        </FocusProvider>
     );
 }
 

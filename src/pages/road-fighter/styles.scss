@@ -2,4 +2,20 @@
     h1 {
         color: $color-error;
     }
+
+    &--link {
+        display: flex;
+        justify-content: center;
+        gap: rescale(32px);
+    }
+
+    &__button {
+        border: 3px solid transparent;
+        transition: transform 150ms ease, border-color 150ms ease;
+
+        &.focused {
+            border-color: yellow;
+            transform: scale(1.05);
+        }
+    }
 }
