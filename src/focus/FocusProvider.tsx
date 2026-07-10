@@ -22,6 +22,7 @@ interface FocusContextValue {
     activateScope: (scopeId: string) => void;
     deactivateScope: (scopeId: string) => void;
     registerFocusable: (scopeId: string, optionsRef: MutableRefObject<FocusableOptions>) => () => void;
+    registerBackHandler: (handler: () => void) => () => void;
 }
 
 export const FocusContext = createContext<FocusContextValue | null>(null);
@@ -32,6 +33,7 @@ function getFocusableKey(scopeId: string, id: string) {
 
 export function FocusProvider({ children }: { children: ReactNode }) {
     const focusablesRef = useRef(new Map<string, RegisteredFocusable>());
+    const backHandlersRef = useRef(new Map<symbol, () => void>());
     const activeScopeIdRef = useRef<string | null>(null);
     const previousFocusedKeyRef = useRef<string | null>(null);
     const [activeScopeId, setActiveScopeId] = useState<string | null>(null);
@@ -68,6 +70,20 @@ export function FocusProvider({ children }: { children: ReactNode }) {
         return () => {
             focusablesRef.current.delete(key);
         };
+    }, []);
+
+    const registerBackHandler = useCallback((handler: () => void) => {
+        const id = Symbol('back-handler');
+        backHandlersRef.current.set(id, handler);
+
+        return () => {
+            backHandlersRef.current.delete(id);
+        };
+    }, []);
+
+    const handleBack = useCallback(() => {
+        const handlers = [...backHandlersRef.current.values()];
+        handlers.at(-1)?.();
     }, []);
 
     const moveFocus = useCallback((direction: FocusDirection) => {
@@ -144,12 +160,18 @@ export function FocusProvider({ children }: { children: ReactNode }) {
             if (event.key === 'Enter' || event.key === 'NumpadEnter') {
                 event.preventDefault();
                 selectFocusedItem();
+                return;
+            }
+
+            if (['Back', 'Backspace', 'BrowserBack', 'Escape', 'GoBack'].includes(event.key)) {
+                event.preventDefault();
+                handleBack();
             }
         };
 
         window.addEventListener('keydown', onKeyDown);
         return () => window.removeEventListener('keydown', onKeyDown);
-    }, [moveFocus, selectFocusedItem]);
+    }, [handleBack, moveFocus, selectFocusedItem]);
 
     const value = useMemo(() => ({
         activeScopeId,
@@ -157,7 +179,8 @@ export function FocusProvider({ children }: { children: ReactNode }) {
         activateScope,
         deactivateScope,
         registerFocusable,
-    }), [activeScopeId, activateScope, deactivateScope, focusedId, registerFocusable]);
+        registerBackHandler,
+    }), [activeScopeId, activateScope, deactivateScope, focusedId, registerBackHandler, registerFocusable]);
 
     return <FocusContext.Provider value={value}>{children}</FocusContext.Provider>;
 }
