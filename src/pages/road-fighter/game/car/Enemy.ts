@@ -3,7 +3,7 @@ import type { CarTheme } from './CarRenderer';
 
 class Enemy {
     public passed = false;
-    public points = 10;
+    public points = 1;
 
     constructor(
         public lane: number,

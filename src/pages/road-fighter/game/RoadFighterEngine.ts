@@ -85,6 +85,13 @@ export class RoadFighterEngine {
         }
     }
 
+    reset() {
+        this.enemyManager.reset();
+        this.state = GameState.Playing;
+        this.startTime = performance.now();
+        this.endTime = 0;
+    }
+
     private drawBackground() {
         this.context.fillStyle = '#1c5c2d';
 

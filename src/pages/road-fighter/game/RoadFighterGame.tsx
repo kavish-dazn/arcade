@@ -40,6 +40,11 @@ export function RoadFighterGame({ onExitToStart }: RoadFighterGameProps) {
                     event.preventDefault();
                     engine.moveRight();
                     break;
+                
+                case 'Enter':
+                    event.preventDefault();
+                    engine.reset();
+                    break;
             }
         };
 
