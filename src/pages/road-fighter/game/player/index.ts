@@ -8,18 +8,13 @@ export default class Player {
     private currentLane = 1;
     private targetLane = 1;
 
-    constructor(
-        private readonly getLaneCenters: () => number[],
-    ) {}
+    constructor(private readonly getLaneCenters: () => number[]) {}
 
     resize(roadWidth: number, canvasHeight: number) {
         this.width = Math.min(roadWidth * 0.16, 110);
         this.height = this.width * 1.55;
 
-        this.y =
-            canvasHeight -
-            this.height -
-            Math.max(28, canvasHeight * 0.06);
+        this.y = canvasHeight - this.height - Math.max(28, canvasHeight * 0.06);
 
         this.snapToLane();
     }
@@ -35,16 +30,11 @@ export default class Player {
     update(deltaSeconds: number) {
         const lanes = this.getLaneCenters();
 
-        const targetX =
-            lanes[this.targetLane] -
-            this.width / 2;
+        const targetX = lanes[this.targetLane] - this.width / 2;
 
         const speed = 12;
 
-        this.x +=
-            (targetX - this.x) *
-            speed *
-            deltaSeconds;
+        this.x += (targetX - this.x) * speed * deltaSeconds;
 
         if (Math.abs(targetX - this.x) < 1) {
             this.x = targetX;
@@ -64,42 +54,19 @@ export default class Player {
         context.beginPath();
         context.moveTo(radius, 0);
         context.lineTo(this.width - radius, 0);
-        context.quadraticCurveTo(
-            this.width,
-            0,
-            this.width,
-            radius,
-        );
+        context.quadraticCurveTo(this.width, 0, this.width, radius);
 
-        context.lineTo(
-            this.width,
-            this.height - radius,
-        );
+        context.lineTo(this.width, this.height - radius);
 
-        context.quadraticCurveTo(
-            this.width,
-            this.height,
-            this.width - radius,
-            this.height,
-        );
+        context.quadraticCurveTo(this.width, this.height, this.width - radius, this.height);
 
         context.lineTo(radius, this.height);
 
-        context.quadraticCurveTo(
-            0,
-            this.height,
-            0,
-            this.height - radius,
-        );
+        context.quadraticCurveTo(0, this.height, 0, this.height - radius);
 
         context.lineTo(0, radius);
 
-        context.quadraticCurveTo(
-            0,
-            0,
-            radius,
-            0,
-        );
+        context.quadraticCurveTo(0, 0, radius, 0);
 
         context.fill();
 
@@ -156,9 +123,7 @@ export default class Player {
     private snapToLane() {
         const lanes = this.getLaneCenters();
 
-        this.x =
-            lanes[this.targetLane] -
-            this.width / 2;
+        this.x = lanes[this.targetLane] - this.width / 2;
 
         this.currentLane = this.targetLane;
     }
