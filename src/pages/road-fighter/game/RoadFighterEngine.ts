@@ -1,5 +1,5 @@
 import LaneManager from './road/LaneManager';
-import  Road from './road/Road';
+import Road from './road/Road';
 import Player from './car/Player';
 import EnemyManager from './car/Enemy';
 
@@ -13,7 +13,7 @@ export class RoadFighterEngine {
     private readonly road = new Road();
     private readonly lanes = new LaneManager();
 
-    private readonly player = new Player(this.lanes);
+    private readonly player = new Player(this.lanes, this.road);
     private readonly enemyManager = new EnemyManager(this.lanes, this.road);
 
     constructor(canvas: HTMLCanvasElement) {

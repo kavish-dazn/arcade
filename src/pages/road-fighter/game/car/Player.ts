@@ -1,4 +1,8 @@
 import LaneManager from '../road/LaneManager';
+import type Road from '../road/Road';
+import { CarDimensions } from './CarDimensions';
+import { CarRenderer } from './CarRenderer';
+import { PLAYER_CAR } from './constant';
 
 class Player {
     private width = 0;
@@ -10,7 +14,10 @@ class Player {
     private currentLane = 1;
     private targetLane = 1;
 
-    constructor(private readonly lanes: LaneManager) {}
+    constructor(
+        private readonly lanes: LaneManager,
+        private readonly road: Road,
+    ) {}
 
     resize(roadWidth: number, canvasHeight: number) {
         this.width = Math.min(roadWidth * 0.16, 110);
@@ -43,72 +50,17 @@ class Player {
     }
 
     render(context: CanvasRenderingContext2D) {
-        const radius = this.width * 0.16;
+        const width = CarDimensions.getWidth(this.road.getRoadWidth());
+        const height = CarDimensions.getHeight(width);
 
-        context.save();
-
-        context.translate(this.x + this.width / 2, this.y + this.height / 2);
-
-        context.rotate(Math.PI);
-
-        context.translate(-this.width / 2, -this.height / 2);
-
-        context.fillStyle = '#d92929';
-
-        context.beginPath();
-        context.moveTo(radius, 0);
-        context.lineTo(this.width - radius, 0);
-        context.quadraticCurveTo(this.width, 0, this.width, radius);
-
-        context.lineTo(this.width, this.height - radius);
-
-        context.quadraticCurveTo(this.width, this.height, this.width - radius, this.height);
-
-        context.lineTo(radius, this.height);
-
-        context.quadraticCurveTo(0, this.height, 0, this.height - radius);
-
-        context.lineTo(0, radius);
-
-        context.quadraticCurveTo(0, 0, radius, 0);
-
-        context.fill();
-
-        context.fillStyle = '#7ed4ed';
-
-        context.fillRect(
-            this.width * 0.18,
-            this.height * 0.18,
-            this.width * 0.64,
-            this.height * 0.25,
-        );
-
-        context.fillStyle = '#9a1515';
-
-        context.fillRect(
-            this.width * 0.1,
-            this.height * 0.53,
-            this.width * 0.8,
-            this.height * 0.16,
-        );
-
-        context.fillStyle = '#fff8b3';
-
-        context.fillRect(
-            this.width * 0.14,
-            this.height * 0.84,
-            this.width * 0.2,
-            this.height * 0.07,
-        );
-
-        context.fillRect(
-            this.width * 0.66,
-            this.height * 0.84,
-            this.width * 0.2,
-            this.height * 0.07,
-        );
-
-        context.restore();
+        CarRenderer.render(context, {
+            x: this.x,
+            y: this.y,
+            width,
+            height,
+            rotation: Math.PI,
+            theme: PLAYER_CAR,
+        });
     }
 
     getBounds() {
