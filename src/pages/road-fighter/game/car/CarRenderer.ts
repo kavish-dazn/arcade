@@ -1,9 +1,4 @@
-export interface CarTheme {
-    bodyColor: string;
-    roofColor: string;
-    windowColor: string;
-    headLightColor: string;
-}
+import type { CarTheme } from '@pages/road-fighter/types';
 
 interface CarRenderOptions {
     x: number;

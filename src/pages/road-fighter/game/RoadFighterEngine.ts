@@ -3,7 +3,11 @@ import Road from './road/Road';
 import Player from './car/Player';
 import EnemyManager from './car/EnemyManager';
 import { CollisionManager } from './collision/CollisionManager';
-import { GameState } from '../constant';
+import { GameState, type GameStats } from '../types';
+
+interface RoadFighterCallbacks {
+    onGameOver: (stats: GameStats) => void;
+}
 
 export class RoadFighterEngine {
     private readonly canvas: HTMLCanvasElement;
@@ -22,7 +26,10 @@ export class RoadFighterEngine {
     private startTime = performance.now();
     private endTime = 0;
 
-    constructor(canvas: HTMLCanvasElement) {
+    constructor(
+        canvas: HTMLCanvasElement,
+        private readonly callbacks: RoadFighterCallbacks,
+    ) {
         this.canvas = canvas;
         const context = canvas.getContext('2d');
 
@@ -92,6 +99,13 @@ export class RoadFighterEngine {
         this.endTime = 0;
     }
 
+    getStats(): GameStats {
+        return {
+            score: this.enemyManager.getScore(),
+            elapsedTime: Math.floor((this.endTime - this.startTime) / 1000),
+        };
+    }
+
     private drawBackground() {
         this.context.fillStyle = '#1c5c2d';
 
@@ -158,35 +172,9 @@ export class RoadFighterEngine {
     }
 
     private drawGameOver() {
-        const ctx = this.context;
-
-        ctx.save();
-
-        ctx.fillStyle = 'rgba(0,0,0,0.75)';
-        ctx.fillRect(0, 0, this.width, this.height);
-
-        ctx.fillStyle = '#fff';
-
-        ctx.textAlign = 'center';
-
-        ctx.font = 'bold 64px Arial';
-
-        ctx.fillText('GAME OVER', this.width / 2, this.height / 2 - 120);
-
-        ctx.font = '36px Arial';
-
-        ctx.fillText(
-            `Score: ${this.enemyManager.getScore()}`,
-            this.width / 2,
-            this.height / 2 - 30,
-        );
-
-        const seconds = Math.floor((this.endTime - this.startTime) / 1000);
-
-        ctx.fillText(`Time: ${seconds}s`, this.width / 2, this.height / 2 + 30);
-
-        ctx.fillText('Press ENTER to Restart', this.width / 2, this.height / 2 + 120);
-
-        ctx.restore();
+        this.callbacks.onGameOver({
+            score: this.enemyManager.getScore(),
+            elapsedTime: Math.floor((this.endTime - this.startTime) / 1000),
+        });
     }
 }

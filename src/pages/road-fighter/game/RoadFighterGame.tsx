@@ -1,8 +1,10 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useBackHandler } from '@focus';
 
 import { RoadFighterEngine } from './RoadFighterEngine';
+import { GameOverOverlay } from './GameOverOverlay';
+import { GameState } from '../types';
 
 interface RoadFighterGameProps {
     onExitToStart: () => void;
@@ -10,6 +12,12 @@ interface RoadFighterGameProps {
 
 export function RoadFighterGame({ onExitToStart }: RoadFighterGameProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const [gameState, setGameState] = useState(GameState.Playing);
+
+    const [stats, setStats] = useState({
+        score: 0,
+        elapsedTime: 0,
+    });
 
     useBackHandler(onExitToStart);
 
@@ -20,7 +28,12 @@ export function RoadFighterGame({ onExitToStart }: RoadFighterGameProps) {
             return;
         }
 
-        const engine = new RoadFighterEngine(canvas);
+        const engine = new RoadFighterEngine(canvas, {
+            onGameOver: (stats) => {
+                setStats(stats);
+                setGameState(GameState.GameOver);
+            },
+        });
         let animationFrameId = 0;
         let previousTimestamp = performance.now();
 
@@ -40,10 +53,11 @@ export function RoadFighterGame({ onExitToStart }: RoadFighterGameProps) {
                     event.preventDefault();
                     engine.moveRight();
                     break;
-                
+
                 case 'Enter':
                     event.preventDefault();
                     engine.reset();
+                    setGameState(GameState.Playing);
                     break;
             }
         };
@@ -80,6 +94,7 @@ export function RoadFighterGame({ onExitToStart }: RoadFighterGameProps) {
                 className="road-fighter__canvas"
                 ref={canvasRef}
             />
+            {gameState === GameState.GameOver && <GameOverOverlay stats={stats} />}
             <p className="road-fighter__instructions">
                 Use Left and Right to steer · Back for menu
             </p>

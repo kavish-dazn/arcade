@@ -16,4 +16,25 @@
         font-size: rescale(24px);
         margin: rescale(12px) 0 0;
     }
+
+    .game-over {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.8);
+        &__content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        p {
+            font-size: rescale(36px);
+        }
+        .enter {
+            font-weight: bold;
+            text-decoration: underline;
+            color: $color-link;
+        }
+    }
 }

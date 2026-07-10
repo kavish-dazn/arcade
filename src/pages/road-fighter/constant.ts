@@ -1,10 +1,4 @@
-import type { CarTheme } from './game/car/CarRenderer';
-
-export enum GameState {
-    Start,
-    Playing,
-    GameOver,
-}
+import type { CarTheme } from '@pages/road-fighter/types';
 
 export const PLAYER_CAR: CarTheme = {
     bodyColor: '#d92929',
