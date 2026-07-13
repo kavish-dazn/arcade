@@ -10,7 +10,8 @@
         "lint:fix": "eslint . --fix && prettier . --write",
         "format": "prettier . --write",
         "format:check": "prettier . --check",
-        "preview": "vite preview"
+        "preview": "vite preview",
+        "android:build": "pnpm run build && pnpm exec cap sync android && ./android/gradlew -p android assembleDebug"
     },
     "dependencies": {
         "@capacitor/core": "^8.4.1",
