@@ -1,5 +1,5 @@
 class Road {
-    private width = 0;
+    // private width = 0;
     private height = 0;
 
     private roadWidth = 0;
@@ -8,7 +8,7 @@ class Road {
     private roadOffset = 0;
 
     resize(width: number, height: number) {
-        this.width = width;
+        // this.width = width;
         this.height = height;
 
         this.roadWidth = Math.min(width * 0.68, height * 1.1);

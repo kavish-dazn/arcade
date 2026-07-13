@@ -1,5 +1,5 @@
+import type { CarTheme } from '@pages/road-fighter/types';
 import type { Bounds } from '../collision/CollisionManager';
-import type { CarTheme } from './CarRenderer';
 
 class Enemy {
     public passed = false;

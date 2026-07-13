@@ -1,9 +1,9 @@
-import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
+import { createHashRouter, Navigate, RouterProvider } from 'react-router-dom';
 
 import Home from '@pages/home';
 import RoadFighter from '@pages/road-fighter';
 
-const router = createBrowserRouter([
+const router = createHashRouter([
     {
         path: '/',
         element: <Home />,
