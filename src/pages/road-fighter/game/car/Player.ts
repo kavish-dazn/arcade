@@ -1,5 +1,4 @@
 import LaneManager from '../road/LaneManager';
-import type Road from '../road/Road';
 import type { Bounds } from '../collision/CollisionManager';
 import { CarDimensions } from './CarDimensions';
 import { CarRenderer } from './CarRenderer';
@@ -17,14 +16,13 @@ class Player {
 
     constructor(
         private readonly lanes: LaneManager,
-        private readonly road: Road,
     ) {}
 
-    resize(roadWidth: number, canvasHeight: number) {
-        this.width = Math.min(roadWidth * 0.16, 110);
-        this.height = this.width * 1.55;
+    resize(canvasHeight: number) {
+        this.width = CarDimensions.getWidth(this.lanes.getLaneWidth());
+        this.height = CarDimensions.getHeight(this.width);
 
-        this.y = canvasHeight - this.height - Math.max(28, canvasHeight * 0.06);
+        this.y = canvasHeight - this.height - Math.max(28, canvasHeight * 0.05);
 
         this.snapToLane();
     }
@@ -51,7 +49,7 @@ class Player {
     }
 
     render(context: CanvasRenderingContext2D) {
-        const width = CarDimensions.getWidth(this.road.getRoadWidth());
+        const width = CarDimensions.getWidth(this.lanes.getLaneWidth());
         const height = CarDimensions.getHeight(width);
 
         CarRenderer.render(context, {

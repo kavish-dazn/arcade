@@ -53,7 +53,7 @@ class EnemyManager {
     }
 
     private spawnEnemy() {
-        const width = CarDimensions.getWidth(this.road.getRoadWidth());
+        const width = CarDimensions.getWidth(this.lanes.getLaneWidth());
         const height = CarDimensions.getHeight(width);
 
         const lane = Math.floor(Math.random() * 3);

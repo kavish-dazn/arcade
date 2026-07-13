@@ -19,7 +19,7 @@ export class RoadFighterEngine {
     private readonly road = new Road();
     private readonly lanes = new LaneManager();
 
-    private readonly player = new Player(this.lanes, this.road);
+    private readonly player = new Player(this.lanes);
     private readonly enemyManager = new EnemyManager(this.lanes, this.road);
 
     private state = GameState.Playing;
@@ -50,7 +50,7 @@ export class RoadFighterEngine {
         this.road.resize(width, height);
 
         this.lanes.resize(this.road.getRoadLeft(), this.road.getRoadWidth());
-        this.player.resize(this.road.getRoadWidth(), height);
+        this.player.resize(height);
     }
 
     update(deltaSeconds: number) {

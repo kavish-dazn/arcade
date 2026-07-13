@@ -11,7 +11,7 @@ class Road {
         // this.width = width;
         this.height = height;
 
-        this.roadWidth = Math.min(width * 0.68, height * 1.1);
+        this.roadWidth = Math.min(width * 0.4, height * 1.1);
         this.roadLeft = (width - this.roadWidth) / 2;
     }
 
@@ -38,7 +38,7 @@ class Road {
     }
 
     getRoadSpeed() {
-        return this.height * 0.72;
+        return this.height * 0.52;
     }
 
     getShoulderWidth() {
