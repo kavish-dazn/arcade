@@ -15,3 +15,11 @@ export interface CarTheme {
     windowColor: string;
     headLightColor: string;
 }
+
+export interface DifficultyLevel {
+    minTime: number;
+    speedMultiplier: number;
+    spawnInterval: number;
+    minCars: number;
+    maxCars: number;
+}

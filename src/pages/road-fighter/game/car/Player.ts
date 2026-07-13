@@ -14,9 +14,7 @@ class Player {
     private currentLane = 1;
     private targetLane = 1;
 
-    constructor(
-        private readonly lanes: LaneManager,
-    ) {}
+    constructor(private readonly lanes: LaneManager) {}
 
     resize(canvasHeight: number) {
         this.width = CarDimensions.getWidth(this.lanes.getLaneWidth());

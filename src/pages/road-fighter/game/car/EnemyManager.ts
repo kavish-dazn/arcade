@@ -1,3 +1,5 @@
+import type { DifficultyLevel } from '@pages/road-fighter/types';
+
 import Enemy from './Enemy';
 import LaneManager from '../road/LaneManager';
 import Road from '../road/Road';
@@ -15,11 +17,11 @@ class EnemyManager {
         private readonly road: Road,
     ) {}
 
-    update(delta: number) {
+    update(delta: number, difficultyLevel: DifficultyLevel) {
         this.spawnTimer += delta;
 
-        if (this.spawnTimer >= 1.5) {
-            this.spawnEnemy();
+        if (this.spawnTimer >= difficultyLevel.spawnInterval) {
+            this.spawnEnemies(difficultyLevel);
             this.spawnTimer = 0;
         }
 
@@ -52,23 +54,41 @@ class EnemyManager {
         return this.score;
     }
 
-    private spawnEnemy() {
+    private spawnEnemies(difficulty: DifficultyLevel) {
+        const count = this.randomBetween(difficulty.minCars, difficulty.maxCars);
+
+        const availableLanes = [0, 1, 2];
+
+        for (let i = 0; i < count; i++) {
+            if (!availableLanes.length) {
+                break;
+            }
+
+            const laneIndex = Math.floor(Math.random() * availableLanes.length);
+
+            const lane = availableLanes.splice(laneIndex, 1)[0];
+
+            this.spawnEnemy(lane, difficulty);
+        }
+    }
+
+    private spawnEnemy(lane: number, difficulty: DifficultyLevel) {
         const width = CarDimensions.getWidth(this.lanes.getLaneWidth());
         const height = CarDimensions.getHeight(width);
 
-        const lane = Math.floor(Math.random() * 3);
+        const theme = ENEMY_CAR_THEMES[Math.floor(Math.random() * ENEMY_CAR_THEMES.length)];
 
-        this.enemies.push(
-            new Enemy(
-                lane,
-                this.lanes.getCenter(lane) - width / 2,
-                -height,
-                width,
-                height,
-                500,
-                ENEMY_CAR_THEMES[Math.floor(Math.random() * ENEMY_CAR_THEMES.length)],
-            ),
+        const enemy = new Enemy(
+            lane,
+            this.lanes.getCenter(lane) - width / 2,
+            -height,
+            width,
+            height,
+            500 * difficulty.speedMultiplier,
+            theme,
         );
+
+        this.enemies.push(enemy);
     }
 
     private drawEnemy(context: CanvasRenderingContext2D, enemy: Enemy) {
@@ -85,6 +105,10 @@ class EnemyManager {
         this.enemies = [];
         this.spawnTimer = 0;
         this.score = 0;
+    }
+
+    private randomBetween(min: number, max: number) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 }
 

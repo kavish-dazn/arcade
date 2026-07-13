@@ -4,6 +4,7 @@ import Player from './car/Player';
 import EnemyManager from './car/EnemyManager';
 import { CollisionManager } from './collision/CollisionManager';
 import { GameState, type GameStats } from '../types';
+import { DifficultyManager } from './difficulty/DifficultyManager';
 
 interface RoadFighterCallbacks {
     onGameOver: (stats: GameStats) => void;
@@ -21,10 +22,13 @@ export class RoadFighterEngine {
 
     private readonly player = new Player(this.lanes);
     private readonly enemyManager = new EnemyManager(this.lanes, this.road);
+    private readonly difficulty = new DifficultyManager();
 
     private state = GameState.Playing;
     private startTime = performance.now();
     private endTime = 0;
+
+    private elapsedTime = 0;
 
     constructor(
         canvas: HTMLCanvasElement,
@@ -57,10 +61,12 @@ export class RoadFighterEngine {
         if (this.state !== GameState.Playing) {
             return;
         }
+        this.elapsedTime += deltaSeconds;
+        this.difficulty.update(this.elapsedTime);
         // const roadSpeed = this.height * 0.72;
         this.road.update(deltaSeconds);
         this.player.update(deltaSeconds);
-        this.enemyManager.update(deltaSeconds);
+        this.enemyManager.update(deltaSeconds, this.difficulty.getCurrent());
         this.checkCollision();
     }
 
