@@ -7,6 +7,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevel[] = [
         spawnInterval: 1.5,
         minCars: 1,
         maxCars: 1,
+        obstacleSpawnInterval: Number.POSITIVE_INFINITY,
     },
     {
         minTime: 15,
@@ -14,6 +15,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevel[] = [
         spawnInterval: 1.3,
         minCars: 1,
         maxCars: 2,
+        obstacleSpawnInterval: 5,
     },
     {
         minTime: 25,
@@ -21,6 +23,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevel[] = [
         spawnInterval: 1.2,
         minCars: 1,
         maxCars: 2,
+        obstacleSpawnInterval: 5,
     },
     {
         minTime: 35,
@@ -28,6 +31,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevel[] = [
         spawnInterval: 1,
         minCars: 1,
         maxCars: 2,
+        obstacleSpawnInterval: 4,
     },
     {
         minTime: 45,
@@ -35,6 +39,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevel[] = [
         spawnInterval: 1.5,
         minCars: 1,
         maxCars: 2,
+        obstacleSpawnInterval: 4,
     },
     {
         minTime: 55,
@@ -42,5 +47,14 @@ export const DIFFICULTY_LEVELS: DifficultyLevel[] = [
         spawnInterval: 1,
         minCars: 1,
         maxCars: 2,
+        obstacleSpawnInterval: 3,
+    },
+    {
+        minTime: 65,
+        speedMultiplier: 2.5,
+        spawnInterval: 1,
+        minCars: 1,
+        maxCars: 2,
+        obstacleSpawnInterval: 3,
     },
 ];

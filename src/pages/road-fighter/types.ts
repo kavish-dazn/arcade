@@ -22,4 +22,5 @@ export interface DifficultyLevel {
     spawnInterval: number;
     minCars: number;
     maxCars: number;
+    obstacleSpawnInterval: number;
 }

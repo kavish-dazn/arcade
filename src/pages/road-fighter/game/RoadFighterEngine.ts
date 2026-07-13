@@ -5,6 +5,7 @@ import EnemyManager from './car/EnemyManager';
 import { CollisionManager } from './collision/CollisionManager';
 import { GameState, type GameStats } from '../types';
 import { DifficultyManager } from './difficulty/DifficultyManager';
+import ObstacleManager from './obstacle/ObstacleManager';
 
 interface RoadFighterCallbacks {
     onGameOver: (stats: GameStats) => void;
@@ -13,6 +14,8 @@ interface RoadFighterCallbacks {
 export class RoadFighterEngine {
     private readonly canvas: HTMLCanvasElement;
     private readonly context: CanvasRenderingContext2D;
+
+    private static readonly WORLD_SPEED = 500;
 
     private width = 0;
     private height = 0;
@@ -23,6 +26,7 @@ export class RoadFighterEngine {
     private readonly player = new Player(this.lanes);
     private readonly enemyManager = new EnemyManager(this.lanes, this.road);
     private readonly difficulty = new DifficultyManager();
+    private obstacleManager = new ObstacleManager(this.lanes, this.road);
 
     private state = GameState.Playing;
     private startTime = performance.now();
@@ -63,11 +67,16 @@ export class RoadFighterEngine {
         }
         this.elapsedTime += deltaSeconds;
         this.difficulty.update(this.elapsedTime);
-        // const roadSpeed = this.height * 0.72;
-        this.road.update(deltaSeconds);
+
+        const level = this.difficulty.getCurrent();
+        const speed = RoadFighterEngine.WORLD_SPEED * level.speedMultiplier;
+
+        this.road.update(deltaSeconds, speed);
         this.player.update(deltaSeconds);
-        this.enemyManager.update(deltaSeconds, this.difficulty.getCurrent());
+        this.enemyManager.update(deltaSeconds, speed, level);
+        this.obstacleManager.update(deltaSeconds, speed, level);
         this.checkCollision();
+        this.checkObstacleCollision();
     }
 
     moveLeft() {
@@ -91,6 +100,7 @@ export class RoadFighterEngine {
         this.drawRoad();
         this.drawLaneMarkers();
         this.enemyManager.render(context);
+        this.obstacleManager.render(context);
         this.drawPlayerCar();
 
         if (this.state === GameState.GameOver) {
@@ -164,6 +174,22 @@ export class RoadFighterEngine {
         for (const enemy of this.enemyManager.getEnemies()) {
             if (CollisionManager.isColliding(playerBounds, enemy.getBounds())) {
                 this.gameOver();
+            }
+        }
+    }
+
+    private checkObstacleCollision() {
+        const playerBounds = this.player.getBounds();
+
+        for (const obstacle of this.obstacleManager.getObstacles()) {
+            if (obstacle.triggered) {
+                continue;
+            }
+
+            if (CollisionManager.isColliding(playerBounds, obstacle.getBounds())) {
+                obstacle.triggered = true;
+
+                this.player.randomLaneShift();
             }
         }
     }

@@ -73,6 +73,20 @@ class Player {
         return this.currentLane;
     }
 
+    randomLaneShift() {
+        switch (this.currentLane) {
+            case 0:
+                this.targetLane = 1;
+                break;
+            case 1:
+                this.targetLane = Math.random() < 0.5 ? 0 : 2;
+                break;
+            case 2:
+                this.targetLane = 1;
+                break;
+        }
+    }
+
     private snapToLane() {
         this.x = this.lanes.getCenter(this.targetLane) - this.width / 2;
 

@@ -15,10 +15,8 @@ class Road {
         this.roadLeft = (width - this.roadWidth) / 2;
     }
 
-    update(deltaSeconds: number) {
-        const roadSpeed = this.height * 0.72;
-
-        this.roadOffset = (this.roadOffset + roadSpeed * deltaSeconds) % this.getLaneDashPeriod();
+    update(deltaSeconds: number, speed: number) {
+        this.roadOffset = (this.roadOffset + speed * deltaSeconds) % this.getLaneDashPeriod();
     }
 
     getRoadWidth() {

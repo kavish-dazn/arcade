@@ -17,11 +17,11 @@ class EnemyManager {
         private readonly road: Road,
     ) {}
 
-    update(delta: number, difficultyLevel: DifficultyLevel) {
+    update(delta: number, speed: number, difficultyLevel: DifficultyLevel) {
         this.spawnTimer += delta;
 
         if (this.spawnTimer >= difficultyLevel.spawnInterval) {
-            this.spawnEnemies(difficultyLevel);
+            this.spawnEnemies(speed, difficultyLevel);
             this.spawnTimer = 0;
         }
 
@@ -54,7 +54,7 @@ class EnemyManager {
         return this.score;
     }
 
-    private spawnEnemies(difficulty: DifficultyLevel) {
+    private spawnEnemies(speed: number, difficulty: DifficultyLevel) {
         const count = this.randomBetween(difficulty.minCars, difficulty.maxCars);
 
         const availableLanes = [0, 1, 2];
@@ -68,11 +68,11 @@ class EnemyManager {
 
             const lane = availableLanes.splice(laneIndex, 1)[0];
 
-            this.spawnEnemy(lane, difficulty);
+            this.spawnEnemy(lane, speed);
         }
     }
 
-    private spawnEnemy(lane: number, difficulty: DifficultyLevel) {
+    private spawnEnemy(lane: number, speed: number) {
         const width = CarDimensions.getWidth(this.lanes.getLaneWidth());
         const height = CarDimensions.getHeight(width);
 
@@ -84,7 +84,7 @@ class EnemyManager {
             -height,
             width,
             height,
-            500 * difficulty.speedMultiplier,
+            speed,
             theme,
         );
 
