@@ -11,7 +11,10 @@
         "format": "prettier . --write",
         "format:check": "prettier . --check",
         "preview": "vite preview",
-        "android:build": "pnpm run build && pnpm exec cap sync android && ./android/gradlew -p android assembleDebug"
+        "android:sync": "pnpm exec cap sync android",
+        "android:build": "pnpm build && pnpm android:sync && ./android/gradlew -p android assembleDebug",
+        "android:build:androidtv": "pnpm build && pnpm android:sync && ./android/gradlew -p android assembleAndroidtvDebug",
+        "android:build:firetv": "pnpm build && pnpm android:sync && ./android/gradlew -p android assembleFiretvDebug"
     },
     "dependencies": {
         "@capacitor/core": "^8.4.1",
