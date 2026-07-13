@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { useBackHandler } from '@focus';
 
-import { RoadFighterEngine } from './RoadFighterEngine';
+import { RoadFighterEngine } from '../game/RoadFighterEngine';
 import { GameOverOverlay } from './GameOverOverlay';
 import { GameState } from '../types';
 

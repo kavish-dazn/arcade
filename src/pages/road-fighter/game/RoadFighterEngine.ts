@@ -110,9 +110,11 @@ export class RoadFighterEngine {
 
     reset() {
         this.enemyManager.reset();
+        this.obstacleManager.reset();
         this.state = GameState.Playing;
         this.startTime = performance.now();
         this.endTime = 0;
+        this.elapsedTime = 0;
     }
 
     getStats(): GameStats {

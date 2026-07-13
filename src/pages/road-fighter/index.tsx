@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { Focusable, FocusScope, VerticalList } from '@focus';
 
-import { RoadFighterGame } from './game/RoadFighterGame';
+import { RoadFighterGame } from './component/RoadFighterGame';
 import './styles.scss';
 
 export default function RoadFighter() {
