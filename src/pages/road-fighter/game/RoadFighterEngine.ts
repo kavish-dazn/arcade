@@ -4,7 +4,7 @@ import Player from './car/Player';
 import EnemyManager from './car/EnemyManager';
 import { CollisionManager } from './collision/CollisionManager';
 import { GameState, type GameStats } from '../types';
-import { DifficultyManager } from './difficulty/DifficultyManager';
+import DifficultyManager from './difficulty/DifficultyManager';
 import ObstacleManager from './obstacle/ObstacleManager';
 
 interface RoadFighterCallbacks {
